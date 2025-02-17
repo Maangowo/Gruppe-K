@@ -56,7 +56,7 @@ Erstelle eine Kanban-Board-Anwendung in JavaScript mit folgenden Anforderungen:
 
 
 ### Modernes JavaScript
-> Check
+> :white_check_mark: Check
 
 ### Clean Code
 > Alles durchkommentiert, sieht gut aus
@@ -65,7 +65,7 @@ Erstelle eine Kanban-Board-Anwendung in JavaScript mit folgenden Anforderungen:
 > Dropzone leuchtet grau auf, wenn Element darüber gehalten wird
 
 ### Minimale Lösung
-> Check
+> :white_check_mark: Check
 
 ### Responsive Design
-> Check
+> :white_check_mark: Check
