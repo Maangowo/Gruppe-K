@@ -59,10 +59,10 @@ Erstelle eine Kanban-Board-Anwendung in JavaScript mit folgenden Anforderungen:
 > :white_check_mark: Check
 
 ### Clean Code
-> Alles durchkommentiert, sieht gut aus
+> :white_check_mark: Alles durchkommentiert, sieht gut aus
 
 ### Drag&Drop Feedback
-> Dropzone leuchtet grau auf, wenn Element darüber gehalten wird
+> :white_check_mark: Dropzone leuchtet grau auf, wenn Element darüber gehalten wird
 
 ### Minimale Lösung
 > :white_check_mark: Check
