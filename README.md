@@ -53,7 +53,7 @@ Erstelle eine Kanban-Board-Anwendung in JavaScript mit folgenden Anforderungen:
 > :x: Nein, alles div-container
 
 ### Valides HTML
-
+> :white_check_mark: Check (Trust me bro)
 
 ### Modernes JavaScript
 > :white_check_mark: Check
