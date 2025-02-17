@@ -50,7 +50,7 @@ Erstelle eine Kanban-Board-Anwendung in JavaScript mit folgenden Anforderungen:
    - Das verschieben von Karten soll eine flüssige animation haben, um die Seite grundsätzlich ansprechender aussehen zu lassen.
 ```
 ### Semantisches HTML
-> Nein, alles div-container
+> :x: Nein, alles div-container
 
 ### Valides HTML
 
