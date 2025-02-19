@@ -70,4 +70,4 @@ Erstelle eine Kanban-Board-Anwendung in JavaScript mit folgenden Anforderungen:
 > :white_check_mark: Check
 
 ### Responsive Design
-> :white_check_mark: Check
+> :white_check_mark: Check, Mit Android und Apple Geräten getestet
