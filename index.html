@@ -1,362 +1,410 @@
 <!DOCTYPE html>
 <html lang="de">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kanban Board</title>
-  <style>
-    /* Globales Styling & Dark Theme */
-    * {
-      box-sizing: border-box;
-    }
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #121212;
-      color: #eee;
-    }
-    
-    /* Board-Layout */
-    .board {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-around;
-      padding: 20px;
-      gap: 20px;
-      min-height: 100vh;
-    }
-    
-    .column {
-      background-color: #1e1e1e;
-      border-radius: 5px;
-      padding: 10px;
-      flex: 1 1 300px;
-      max-width: 350px;
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .column h2 {
-      text-align: center;
-      margin-top: 0;
-    }
-    
-    .card-container {
-      flex-grow: 1;
-      min-height: 50px;
-      padding: 5px;
-      border: 2px dashed #444;
-      border-radius: 5px;
-      margin-bottom: 10px;
-      /* Übergangsanimation beim Verschieben */
-      transition: background-color 0.2s ease;
-    }
-    
-    .card-container.dragover {
-      background-color: rgba(255, 255, 255, 0.1);
-    }
-    
-    /* Karten-Styling */
-    .card {
-      background-color: #333;
-      border-radius: 5px;
-      padding: 10px;
-      margin-bottom: 10px;
-      cursor: grab;
-      transition: transform 0.2s ease, background-color 0.2s ease;
-      position: relative;
-    }
-    .card h4 {
-      margin: 0 0 5px;
-      font-size: 1.1em;
-    }
-    .card p {
-      margin: 0 0 5px;
-      font-size: 0.9em;
-    }
-    .card span.hours {
-      font-size: 0.8em;
-      background: rgba(0, 0, 0, 0.3);
-      padding: 2px 5px;
-      border-radius: 3px;
-    }
-    
-    /* Kartenfarben je Typ */
-    .card.bug {
-      border-left: 5px solid #d32f2f;
-    }
-    .card.userstory {
-      border-left: 5px solid #388e3c;
-    }
-    .card.task {
-      border-left: 5px solid #1976d2;
-    }
-    
-    /* Löschen-Button in der Karte */
-    .card .delete-btn {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      background: transparent;
-      border: none;
-      color: #eee;
-      font-size: 1em;
-      cursor: pointer;
-    }
-    .card .delete-btn:hover {
-      color: #ff5252;
-    }
-    
-    /* Button zum Hinzufügen */
-    .add-card-btn {
-      background-color: #444;
-      color: #eee;
-      border: none;
-      padding: 8px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.2s ease;
-    }
-    .add-card-btn:hover {
-      background-color: #555;
-    }
-    
-    /* Modal Styling */
-    .modal {
-      display: none; /* Unsichtbar per Default */
-      position: fixed;
-      z-index: 100;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0, 0, 0, 0.7);
-      padding-top: 50px;
-    }
-    .modal-content {
-      background-color: #2c2c2c;
-      margin: auto;
-      padding: 20px;
-      border: 1px solid #888;
-      width: 90%;
-      max-width: 500px;
-      border-radius: 5px;
-      position: relative;
-    }
-    .modal-content h3 {
-      margin-top: 0;
-    }
-    .modal-content label {
-      display: block;
-      margin: 10px 0 5px;
-    }
-    .modal-content input[type="text"],
-    .modal-content input[type="number"],
-    .modal-content textarea,
-    .modal-content select {
-      width: 100%;
-      padding: 8px;
-      border: none;
-      border-radius: 3px;
-      margin-bottom: 10px;
-    }
-    .modal-content button[type="submit"] {
-      background-color: #1976d2;
-      border: none;
-      color: #eee;
-      padding: 10px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .modal-content button[type="submit"]:hover {
-      background-color: #1565c0;
-    }
-    .close-btn {
-      position: absolute;
-      right: 10px;
-      top: 5px;
-      font-size: 1.5em;
-      cursor: pointer;
-    }
-    
-    /* Responsive Anpassungen */
-    @media (max-width: 768px) {
-      .board {
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kanban Board</title>
+    <style>
+      /* CSS Reset */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background-color: #121212;
+        color: #ffffff;
+        font-family: Arial, sans-serif;
+        line-height: 1.5;
+      }
+
+      /* Header */
+      header {
+        padding: 1rem;
+        text-align: center;
+        background-color: #1e1e1e;
+        border-bottom: 1px solid #333;
+      }
+
+      /* Main-Bereich */
+      main {
+        padding: 1rem;
+      }
+
+      /* Kanban-Board: Responsive Grid */
+      #kanban-board {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem;
+      }
+
+      /* Spalten */
+      .column {
+        background-color: #1e1e1e;
+        border: 1px solid #333;
+        border-radius: 8px;
+        display: flex;
         flex-direction: column;
+        height: 80vh;
+        overflow: hidden;
+      }
+
+      .column header {
+        padding: 0.5rem;
+        background-color: #2a2a2a;
+        border-bottom: 1px solid #333;
+      }
+
+      .column header h2 {
+        font-size: 1.2rem;
+        text-align: center;
+      }
+
+      /* Container für Karten */
+      .card-container {
+        flex-grow: 1;
+        padding: 0.5rem;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        transition: background-color 0.3s ease;
+      }
+      /* Hervorhebung beim Dragover */
+      .card-container.drag-over {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      .column footer {
+        padding: 0.5rem;
+        text-align: center;
+        background-color: #2a2a2a;
+        border-top: 1px solid #333;
+      }
+
+      .add-card-button {
+        background-color: #3a3a3a;
+        color: #fff;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+      }
+      .add-card-button:hover {
+        background-color: #555;
+      }
+
+      /* Karten-Styling */
+      .card {
+        background-color: #2a2a2a;
+        border-left: 8px solid;
+        border-radius: 4px;
+        padding: 0.5rem;
+        cursor: grab;
+        transition: transform 0.2s ease, opacity 0.2s ease;
+      }
+      .card:active {
+        cursor: grabbing;
+      }
+      .card header {
+        display: flex;
+        justify-content: space-between;
         align-items: center;
       }
-      .column {
-        max-width: 90%;
+      .card header h3 {
+        font-size: 1rem;
       }
-    }
-  </style>
-</head>
-<body>
-  <!-- Kanban-Board -->
-  <div class="board">
-    <!-- Spalte "ToDo" -->
-    <div class="column" data-column="todo">
-      <h2>ToDo</h2>
-      <div class="card-container" id="todo-cards"></div>
-      <button class="add-card-btn" data-column="todo">+ Karte hinzufügen</button>
-    </div>
-    <!-- Spalte "In Progress" -->
-    <div class="column" data-column="inprogress">
-      <h2>In Progress</h2>
-      <div class="card-container" id="inprogress-cards"></div>
-      <button class="add-card-btn" data-column="inprogress">+ Karte hinzufügen</button>
-    </div>
-    <!-- Spalte "Done" -->
-    <div class="column" data-column="done">
-      <h2>Done</h2>
-      <div class="card-container" id="done-cards"></div>
-      <button class="add-card-btn" data-column="done">+ Karte hinzufügen</button>
-    </div>
-  </div>
+      .delete-button {
+        background: none;
+        border: none;
+        color: #ff5555;
+        font-size: 1.2rem;
+        cursor: pointer;
+      }
+      .card p {
+        margin: 0.5rem 0;
+        font-size: 0.9rem;
+      }
+      .card footer {
+        font-size: 0.8rem;
+        text-align: right;
+      }
+      /* Kartentypen */
+      .card.card-type-bug {
+        border-color: #ff5555;
+      }
+      .card.card-type-user-story {
+        border-color: #55ff55;
+      }
+      .card.card-type-task {
+        border-color: #5555ff;
+      }
 
-  <!-- Modal für die Kartenerstellung -->
-  <div class="modal" id="card-modal">
-    <div class="modal-content">
-      <span class="close-btn" id="close-modal">&times;</span>
-      <h3>Karte erstellen</h3>
-      <form id="card-form">
-        <!-- Hidden-Feld, um die Ziel-Spalte zu speichern -->
-        <input type="hidden" id="column-target" value="">
-        
-        <label for="card-type">Kartentyp:</label>
-        <select id="card-type" required>
-          <option value="">-- Bitte wählen --</option>
-          <option value="bug">Bug</option>
-          <option value="userstory">User Story</option>
-          <option value="task">Task</option>
-        </select>
-        
-        <label for="card-title">Titel:</label>
-        <input type="text" id="card-title" required>
-        
-        <label for="card-description">Beschreibung:</label>
-        <textarea id="card-description" rows="3" required></textarea>
-        
-        <label for="card-hours">Arbeitspaketgröße (Stunden):</label>
-        <input type="number" id="card-hours" required>
-        
-        <button type="submit">Karte erstellen</button>
+      /* Dialog (Formular) */
+      dialog {
+        background-color: #1e1e1e;
+        border: 1px solid #333;
+        border-radius: 8px;
+        padding: 1rem;
+        color: #fff;
+      }
+      dialog form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      dialog fieldset {
+        border: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      dialog input,
+      dialog textarea {
+        background-color: #2a2a2a;
+        border: 1px solid #555;
+        border-radius: 4px;
+        padding: 0.5rem;
+        color: #fff;
+      }
+      dialog button {
+        background-color: #3a3a3a;
+        border: none;
+        padding: 0.5rem;
+        border-radius: 4px;
+        cursor: pointer;
+        color: #fff;
+      }
+      dialog button:hover {
+        background-color: #555;
+      }
+
+      /* Responsive Anpassungen */
+      @media (max-width: 600px) {
+        .column {
+          height: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Kanban Board</h1>
+    </header>
+    <main>
+      <section id="kanban-board">
+        <!-- Spalte ToDo -->
+        <section class="column" data-status="todo">
+          <header>
+            <h2>ToDo</h2>
+          </header>
+          <section class="card-container" data-status="todo">
+            <!-- Karten werden hier dynamisch eingefügt -->
+          </section>
+          <footer>
+            <button class="add-card-button" data-status="todo">
+              Karte hinzufügen
+            </button>
+          </footer>
+        </section>
+        <!-- Spalte In Progress -->
+        <section class="column" data-status="in-progress">
+          <header>
+            <h2>In Progress</h2>
+          </header>
+          <section class="card-container" data-status="in-progress">
+            <!-- Karten werden hier dynamisch eingefügt -->
+          </section>
+          <footer>
+            <button class="add-card-button" data-status="in-progress">
+              Karte hinzufügen
+            </button>
+          </footer>
+        </section>
+        <!-- Spalte Done -->
+        <section class="column" data-status="done">
+          <header>
+            <h2>Done</h2>
+          </header>
+          <section class="card-container" data-status="done">
+            <!-- Karten werden hier dynamisch eingefügt -->
+          </section>
+          <footer>
+            <button class="add-card-button" data-status="done">
+              Karte hinzufügen
+            </button>
+          </footer>
+        </section>
+      </section>
+    </main>
+
+    <!-- Dialog zum Erstellen einer neuen Karte -->
+    <dialog id="cardFormDialog">
+      <form id="cardForm" method="dialog">
+        <header>
+          <h2>Neue Karte erstellen</h2>
+        </header>
+        <fieldset>
+          <legend>Kartentyp</legend>
+          <label>
+            <input type="radio" name="cardType" value="bug" required />
+            Bug
+          </label>
+          <label>
+            <input type="radio" name="cardType" value="user-story" />
+            User Story
+          </label>
+          <label>
+            <input type="radio" name="cardType" value="task" />
+            Task
+          </label>
+        </fieldset>
+        <fieldset>
+          <legend>Kartendetails</legend>
+          <label for="cardTitle">Titel:</label>
+          <input type="text" id="cardTitle" name="cardTitle" required />
+          <label for="cardDescription">Beschreibung:</label>
+          <textarea id="cardDescription" name="cardDescription" required></textarea>
+          <label for="cardHours">Arbeitspaketgröße (Stunden):</label>
+          <input type="number" id="cardHours" name="cardHours" min="1" required />
+        </fieldset>
+        <menu>
+          <li style="list-style-type: none;"><button type="submit">Erstellen</button></li>
+          <li style="list-style-type: none;"><button type="button" id="cancelButton">Abbrechen</button></li>
+        </menu>
       </form>
-    </div>
-  </div>
+    </dialog>
 
-  <script>
-    // Zähler zur eindeutigen ID-Vergabe an Karten
-    let cardIdCounter = 0;
-    
-    // Modal-Elemente
-    const modal = document.getElementById('card-modal');
-    const closeModalBtn = document.getElementById('close-modal');
-    const cardForm = document.getElementById('card-form');
-    const columnTargetInput = document.getElementById('column-target');
-    
-    // Alle "Karte hinzufügen"-Buttons
-    const addCardButtons = document.querySelectorAll('.add-card-btn');
-    addCardButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        // Zielspalte speichern (z. B. "todo", "inprogress", "done")
-        const target = btn.getAttribute('data-column');
-        columnTargetInput.value = target;
-        // Formular zurücksetzen
-        cardForm.reset();
-        // Modal anzeigen
-        modal.style.display = 'block';
-      });
-    });
-    
-    // Modal schließen
-    closeModalBtn.addEventListener('click', () => {
-      modal.style.display = 'none';
-    });
-    window.addEventListener('click', (e) => {
-      if (e.target == modal) {
-        modal.style.display = 'none';
-      }
-    });
-    
-    // Kartenerstellungs-Formular
-    cardForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      
-      // Eingaben aus dem Formular auslesen
-      const type = document.getElementById('card-type').value;
-      const title = document.getElementById('card-title').value;
-      const description = document.getElementById('card-description').value;
-      const hours = document.getElementById('card-hours').value;
-      const targetColumn = columnTargetInput.value;
-      
-      // Erstelle die Karten-DOM-Struktur
-      const card = document.createElement('div');
-      card.classList.add('card', type);
-      card.setAttribute('draggable', 'true');
-      // Eindeutige ID vergeben
-      card.id = 'card-' + cardIdCounter++;
-      
-      // Inhalt der Karte
-      card.innerHTML = `
-        <button class="delete-btn">&times;</button>
-        <h4>${title}</h4>
-        <p>${description}</p>
-        <span class="hours">${hours} h</span>
-      `;
-      
-      // Lösch-Funktion
-      card.querySelector('.delete-btn').addEventListener('click', () => {
-        card.remove();
-      });
-      
-      // Drag & Drop Event Listener hinzufügen
-      card.addEventListener('dragstart', dragStart);
-      card.addEventListener('dragend', dragEnd);
-      
-      // Karte in die entsprechende Spalte einfügen
-      document.getElementById(targetColumn + '-cards').appendChild(card);
-      
-      // Modal schließen
-      modal.style.display = 'none';
-    });
-    
-    // Drag & Drop Funktionen
-    let draggedCard = null;
-    
-    function dragStart(e) {
-      draggedCard = this;
-      e.dataTransfer.setData('text/plain', this.id);
-      // Optional: visuelles Feedback (z. B. Transparenz)
-      setTimeout(() => {
-        this.style.opacity = '0.5';
-      }, 0);
-    }
-    
-    function dragEnd(e) {
-      this.style.opacity = '1';
-      draggedCard = null;
-    }
-    
-    // Alle Container, in die Karten abgelegt werden können
-    const cardContainers = document.querySelectorAll('.card-container');
-    cardContainers.forEach(container => {
-      container.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        container.classList.add('dragover');
-      });
-      container.addEventListener('dragleave', () => {
-        container.classList.remove('dragover');
-      });
-      container.addEventListener('drop', (e) => {
-        e.preventDefault();
-        container.classList.remove('dragover');
-        const id = e.dataTransfer.getData('text/plain');
-        const card = document.getElementById(id);
-        container.appendChild(card);
-      });
-    });
-  </script>
-</body>
+    <script>
+      (function () {
+        const cardFormDialog = document.getElementById("cardFormDialog");
+        const cardForm = document.getElementById("cardForm");
+        const cancelButton = document.getElementById("cancelButton");
+        let currentColumnStatus = null;
+
+        // Öffnet das Formular beim Klick auf "Karte hinzufügen"
+        const addCardButtons = document.querySelectorAll(
+          ".add-card-button"
+        );
+        addCardButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            currentColumnStatus = button.getAttribute("data-status");
+            cardForm.reset();
+            cardFormDialog.showModal();
+          });
+        });
+
+        // Formular-Abbrechen
+        cancelButton.addEventListener("click", () => {
+          cardFormDialog.close();
+        });
+
+        // Formular zum Erstellen einer neuen Karte
+        cardForm.addEventListener("submit", (event) => {
+          event.preventDefault();
+          const formData = new FormData(cardForm);
+          const cardType = formData.get("cardType");
+          const cardTitle = formData.get("cardTitle");
+          const cardDescription = formData.get("cardDescription");
+          const cardHours = formData.get("cardHours");
+
+          const cardElement = createCardElement(
+            cardType,
+            cardTitle,
+            cardDescription,
+            cardHours
+          );
+          const container = document.querySelector(
+            `.card-container[data-status="${currentColumnStatus}"]`
+          );
+          container.appendChild(cardElement);
+          cardFormDialog.close();
+        });
+
+        // Erzeugt ein Karten-Element
+        function createCardElement(type, title, description, hours) {
+          const article = document.createElement("article");
+          article.classList.add("card", `card-type-${type}`);
+          article.setAttribute("draggable", "true");
+
+          // Header mit Titel und Lösch-Button
+          const header = document.createElement("header");
+          const h3 = document.createElement("h3");
+          h3.textContent = title;
+          const deleteButton = document.createElement("button");
+          deleteButton.classList.add("delete-button");
+          deleteButton.textContent = "×";
+          deleteButton.setAttribute("aria-label", "Karte löschen");
+          header.appendChild(h3);
+          header.appendChild(deleteButton);
+          article.appendChild(header);
+
+          // Beschreibung
+          const p = document.createElement("p");
+          p.textContent = description;
+          article.appendChild(p);
+
+          // Footer mit Stundenangabe
+          const footer = document.createElement("footer");
+          footer.textContent = `Arbeitsaufwand: ${hours} Stunde(n)`;
+          article.appendChild(footer);
+
+          // Ereignis zum Löschen der Karte
+          deleteButton.addEventListener("click", () => {
+            article.remove();
+          });
+
+          // Drag & Drop Ereignisse
+          article.addEventListener("dragstart", handleDragStart);
+          article.addEventListener("dragend", handleDragEnd);
+
+          return article;
+        }
+
+        let draggedElement = null;
+
+        function handleDragStart(event) {
+          draggedElement = this;
+          event.dataTransfer.effectAllowed = "move";
+          // setData ist optional – wird hier zur Kompatibilität gesetzt
+          event.dataTransfer.setData("text/plain", "");
+          setTimeout(() => {
+            this.style.opacity = "0.5";
+          }, 0);
+        }
+
+        function handleDragEnd(event) {
+          this.style.opacity = "1";
+          draggedElement = null;
+          // Entferne die Hervorhebung aller Dropzonen
+          document
+            .querySelectorAll(".card-container")
+            .forEach((container) =>
+              container.classList.remove("drag-over")
+            );
+        }
+
+        // Ereignisse für die Dropzonen (card-container)
+        const cardContainers = document.querySelectorAll(".card-container");
+        cardContainers.forEach((container) => {
+          container.addEventListener("dragover", (event) => {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = "move";
+            container.classList.add("drag-over");
+          });
+          container.addEventListener("dragleave", (event) => {
+            container.classList.remove("drag-over");
+          });
+          container.addEventListener("drop", (event) => {
+            event.preventDefault();
+            if (draggedElement) {
+              container.appendChild(draggedElement);
+            }
+            container.classList.remove("drag-over");
+          });
+        });
+      })();
+    </script>
+  </body>
 </html>

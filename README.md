@@ -36,7 +36,7 @@ Erstelle eine Kanban-Board-Anwendung in JavaScript mit folgenden Anforderungen:
 4. **Interaktive Funktionen:**
    - **Erstellen von Karten**: Benutzer können neue Karten mit den oben genannten Eigenschaften in jeder der drei Spalten erstellen.
    - **Löschen von Karten**: Jede Karte soll eine Löschoption haben, um sie zu entfernen.
-   - **Verschieben von Karten**: Karten sollen per Drag & Drop zwischen den Spalten verschoben werden können.
+   - **Verschieben von Karten**: Karten sollen per Drag & Drop zwischen den Spalten verschoben werden können. Hierbei sollen die Dropzones hervogehoben werden, damit der Nutzer diese leichter erkennt 
    
 5. **Design und Layout:**
    - **Dunkles Design**: Die Benutzeroberfläche soll ein dunkles Theme haben, mit passenden Farben für Hintergrund, Karten und Text.
@@ -44,16 +44,18 @@ Erstelle eine Kanban-Board-Anwendung in JavaScript mit folgenden Anforderungen:
    - **Responsive Layout**: Das Layout soll responsiv sein, sodass es auf verschiedenen Bildschirmgrößen gut funktioniert, einschließlich mobilen Geräten.
    
 6. **Technische Anforderungen:**
+   - Der HTML-Code soll semantisch sein, also keine divs enthalten
+   - Achte bitte unbedingt darauf, dass alle angegebenen funktionen auch korrekt ausgeführt werden können
    - Verwende HTML, CSS und JavaScript (optional: mit einer Bibliothek wie dragula.js oder react-beautiful-dnd für Drag&Drop).
    - Nutze ein flexibles Grid-System (z.B. CSS Flexbox oder CSS Grid), um die Spalten und Karten korrekt auszurichten und das Layout anzupassen.
    - Verwende JavaScript, um dynamisch Karten zu erstellen, zu löschen und zu verschieben.
    - Das verschieben von Karten soll eine flüssige animation haben, um die Seite grundsätzlich ansprechender aussehen zu lassen.
 ```
 ### Semantisches HTML
-> :x: Nein, alles div-container
+> :white_check_mark_ Check
 
 ### Valides HTML
-> :white_check_mark: Check (Trust me bro)
+> :white_check_mark: Check
 
 ### Modernes JavaScript
 > :white_check_mark: Check
