@@ -52,7 +52,7 @@ Erstelle eine Kanban-Board-Anwendung in JavaScript mit folgenden Anforderungen:
    - Das verschieben von Karten soll eine flüssige animation haben, um die Seite grundsätzlich ansprechender aussehen zu lassen.
 ```
 ### Semantisches HTML
-> :white_check_mark_ Check
+> :white_check_mark: Check
 
 ### Valides HTML
 > :white_check_mark: Check
